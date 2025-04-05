@@ -1,49 +1,60 @@
-
-const productos = ["zapallo", "papa", "camote", "zanahoria", "acelga"];
-const precios = [100, 150, 120, 50, 80];
-let carrito = [];
-let total = 0;
-
-
-function mostrarProductos() {
-    console.log("Verduras disponibles:");
-    productos.forEach((producto, index) => {
-        console.log(`${producto}: $${precios[index]}`);
+const productos = [
+    { id: 1, nombre: "papa kg", precio: 2100 },
+    { id: 2, nombre: "zapallo kg", precio: 2500 },
+    { id: 3, nombre: "zanahoria kg", precio: 900 },
+    { id: 4, nombre: "acelga kg", precio: 1000 }
+  ];
+  
+  let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+  
+  const contenedorProductos = document.getElementById("productos");
+  const contenedorCarrito = document.getElementById("items-carrito");
+  const total = document.getElementById("total");
+  const btnVaciar = document.getElementById("vaciar-carrito");
+  
+  // Renderiza los productos
+  productos.forEach(producto => {
+    const div = document.createElement("div");
+    div.innerHTML = `
+      <h3>${producto.nombre}</h3>
+      <p>$${producto.precio}</p>
+      <button onclick="agregarAlCarrito(${producto.id})">Agregar</button>
+    `;
+    contenedorProductos.appendChild(div);
+  });
+  
+  function agregarAlCarrito(id) {
+    const producto = productos.find(p => p.id === id);
+    carrito.push(producto);
+    actualizarCarrito();
+  }
+  
+  function eliminarProducto(index) {
+    carrito.splice(index, 1);
+    actualizarCarrito();
+  }
+  
+  function actualizarCarrito() {
+    contenedorCarrito.innerHTML = "";
+    carrito.forEach((item, index) => {
+      const div = document.createElement("div");
+      div.innerHTML = `
+        ${item.nombre} - $${item.precio}
+        <button onclick="eliminarProducto(${index})">Eliminar</button>
+      `;
+      contenedorCarrito.appendChild(div);
     });
-}
-
-
-function agregarAlCarrito() {
-    let seguirComprando = true;
-    while (seguirComprando) {
-        let seleccion = prompt("Ingrese la verdura que desea comprar o 'pagar' para finalizar:").toLowerCase();
-        if (seleccion === "pagar") {
-            seguirComprando = false;
-            break;
-        }
-        
-        let indice = productos.indexOf(seleccion);
-        if (indice !== -1) {
-            carrito.push(productos[indice]);
-            total += precios[indice];
-            alert(`${seleccion} Agregado al carrito. Total actual: $${total}`);
-        } else {
-            alert("Verdura no encontrada. Intente nuevamente.");
-        }
-    }
-}
-
-
-function mostrarTotal() {
-    console.log("Carrito de compras:");
-    carrito.forEach((producto, index) => {
-        console.log(`${index + 1}. ${producto}`);
-    });
-    console.log(`Total a pagar: $${total}`);
-    alert(` Total a pagar: $${total}`);
-}
-
-
-mostrarProductos();
-agregarAlCarrito();
-mostrarTotal();
+  
+    const totalCarrito = carrito.reduce((acc, item) => acc + item.precio, 0);
+    total.innerText = totalCarrito;
+  
+    localStorage.setItem("carrito", JSON.stringify(carrito));
+  }
+  
+  btnVaciar.addEventListener("click", () => {
+    carrito = [];
+    actualizarCarrito();
+  });
+  
+  actualizarCarrito(); // para cargar lo del localStorage
+  
