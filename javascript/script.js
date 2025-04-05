@@ -56,5 +56,5 @@ const productos = [
     actualizarCarrito();
   });
   
-  actualizarCarrito(); // para cargar lo del localStorage
+  actualizarCarrito(); 
   
