@@ -12,7 +12,7 @@ const productos = [
   const total = document.getElementById("total");
   const btnVaciar = document.getElementById("vaciar-carrito");
   
-  // Renderiza los productos
+  
   productos.forEach(producto => {
     const div = document.createElement("div");
     div.innerHTML = `
